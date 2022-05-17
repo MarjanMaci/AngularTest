@@ -6,11 +6,16 @@ import { map } from 'rxjs/operators';
 
 import { environment } from '@environments/environment';
 import { User } from '@app/_models';
+import { MyTask } from '@app/_models/mytask';
+
+
+//Everything is packed in one service ... 
 
 @Injectable({ providedIn: 'root' })
 export class AccountService {
     private userSubject: BehaviorSubject<User>;
     public user: Observable<User>;
+    public task: Observable<MyTask>;
 
     constructor(
         private router: Router,
@@ -44,5 +49,33 @@ export class AccountService {
 
     register(user: User) {
         return this.http.post(`${environment.apiUrl}/account/registerNew`, user);
+    }
+
+    getTasks() {
+        return this.http.get<MyTask[]>(`${environment.apiUrl}/tasks/getAll`);
+    }
+
+    getTaskById(id: Number) {
+        return this.http.get<User>(`${environment.apiUrl}/tasks/${id}`);
+    }
+
+    addTask(task: MyTask) {
+        console.log(task)
+        return this.http.post(`${environment.apiUrl}/tasks/addNew`, task);
+    }
+
+    update(id:Number,params) {
+        console.log(id, params)
+        return this.http.put(`${environment.apiUrl}/tasks/${id}`, params)
+            .pipe(map(x => {
+                return x;
+            }));
+    }
+
+    deleteTask(id: Number){
+        return this.http.delete(`${environment.apiUrl}/tasks/${id}`)
+        .pipe(map(x => {
+                return x;
+        }));
     }
 }
